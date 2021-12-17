@@ -16,6 +16,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+    - name: Install Python dependencies
+      run: |
+        pip install -r requirements.txt
     - name: Run the entire logic
       run: python logic.py
     - name: Commit and Push Backups to Repo
