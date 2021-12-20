@@ -1,4 +1,4 @@
-name: Scrape NFT sources and upload to S3
+name: Scrape NFT recent sales of Top 10 collections every 5 minutes and upload to S3
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       run: |
         pip install -r requirements.txt
     - name: Run the entire logic
-      run: python logic.py
+      run: python logic_sales.py
       env:
         AWSACCESSKEYID: ${{ secrets.AWSACCESSKEYID }}
         AWSSECRETKEY: ${{ secrets.AWSSECRETKEY }}
