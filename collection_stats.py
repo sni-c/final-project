@@ -10,7 +10,7 @@ def store_rec20_sales(collection):
 
       text = json.loads(response.text)
 
-      collections = {}
+      collectionlist = []
       i = 0
 
       for i in range(0,20):
@@ -22,9 +22,8 @@ def store_rec20_sales(collection):
          name['event_timestamp'] = text['assets'][i]['last_sale']['event_timestamp']
          name['eth_price'] = text['assets'][i]['last_sale']['payment_token']['eth_price']
          name['usd_price'] = text['assets'][i]['last_sale']['payment_token']['usd_price']
-         number = text['assets'][i]['id']
-         collections[number] = name
-      return collections
+         collectionlist.append(name)
+      return collectionlist
 
    except:
       return None
