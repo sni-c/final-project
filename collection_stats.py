@@ -22,7 +22,8 @@ def store_rec20_sales(collection):
          name['event_timestamp'] = text['assets'][i]['last_sale']['event_timestamp']
          name['eth_price'] = text['assets'][i]['last_sale']['payment_token']['eth_price']
          name['usd_price'] = text['assets'][i]['last_sale']['payment_token']['usd_price']
-         collections['values'] = name
+         number = text['assets'][i]['id']
+         collections[number] = name
       return collections
 
    except:
