@@ -12,6 +12,7 @@ def collection_data(collection):
 
       collectiondict = {}
       
+      collectiondict['collectionslug'] = collection
       collectiondict['one_day_volume'] = text['stats']['one_day_volume']
       collectiondict['one_day_change'] = text['stats']['one_day_change']
       collectiondict['one_day_sales'] = text['stats']['one_day_sales']
