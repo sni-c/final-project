@@ -25,7 +25,7 @@ def uploadFileToS3(results):
       # produce json strings for top 10 collections
       jsonstr = json.dumps(sales_stats.store_rec20_sales(item))
 
-      filename = 'json/'+y+'/'+item+'_'+datestr+'.json'
+      filename = 'raw_sales/'+y+'/'+item+'_'+datestr+'.json'
       upload_file_key = filename
 
       if not os.path.exists(os.path.dirname(filename)):

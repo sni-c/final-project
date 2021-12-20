@@ -25,7 +25,7 @@ def uploadCollectionData(results):
       # produce json strings for top 10 collections
       jsonstr = json.dumps(collection_stat.collection_data(item))
 
-      filename = 'collection/'+y+'/'+item+'_'+datestr+'.json'
+      filename = 'raw_collection/'+y+'/'+item+'_'+datestr+'.json'
 
       upload_file_key = filename
 
