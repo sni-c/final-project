@@ -1,5 +1,5 @@
 import scrape
-import collection_stats
+import collection_stat
 import datetime
 import json
 import os
@@ -10,7 +10,7 @@ client = boto3.client('s3',
                         aws_access_key_id = os.getenv('AWSACCESSKEYID'),
                         aws_secret_access_key = os.getenv('AWSSECRETKEY'))
 
-def uploadFileToS3(results):
+def uploadCollectionData(results):
    # initial filename per json output
    x = str(datetime.datetime.now().replace(microsecond=0)).replace(' ', '_')
    datestr = x.replace(':', '.')
@@ -23,9 +23,10 @@ def uploadFileToS3(results):
 
    for item in results:
       # produce json strings for top 10 collections
-      jsonstr = json.dumps(collection_stats.store_rec20_sales(item))
+      jsonstr = json.dumps(collection_stat.collection_data(item))
 
-      filename = 'json/'+y+'/'+item+'_'+datestr+'.json'
+      filename = 'collection/'+y+'/'+item+'_'+datestr+'.json'
+
       upload_file_key = filename
 
       if not os.path.exists(os.path.dirname(filename)):
@@ -43,4 +44,4 @@ def uploadFileToS3(results):
 
 # main logic
 results = scrape.get_top10_collections()
-uploadFileToS3(results)
+uploadCollectionData(results)
