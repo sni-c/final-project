@@ -17,6 +17,7 @@ def store_rec20_sales(collection):
          name = {}
          name['collectionslug'] = collection
          name['nftid'] = text['assets'][i]['id']
+         name['permalink'] = text['assets'][i]['permalink']
          name['num_sales'] = text['assets'][i]['num_sales']
          name['image_url'] = text['assets'][i]['image_original_url']
          name['name'] = text['assets'][i]['name']
