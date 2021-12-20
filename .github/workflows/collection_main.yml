@@ -1,0 +1,37 @@
+name: Scrape Top 10 Collection Stats Daily 
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v2
+    - name: Commit and Push Backups to Repo
+      run: |-
+        git config user.name "Automated"
+        git config user.email "actions@users.noreply.github.com"
+        git pull origin master
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install Python dependencies
+      run: |
+        pip install -r requirements.txt
+    - name: Run the entire logic
+      run: python logic_collection.py
+      env:
+        AWSACCESSKEYID: ${{ secrets.AWSACCESSKEYID }}
+        AWSSECRETKEY: ${{ secrets.AWSSECRETKEY }}
+    - name: Commit and Push Backups to Repo
+      run: |-
+        git add -A
+        timestamp=$(date -u)
+        git commit -m "Latest data: ${timestamp}" || exit 0
+        git push
