@@ -8,7 +8,7 @@ import boto3
 
 client = boto3.client('s3',
                         aws_access_key_id = os.getenv('AWSACCESSKEYID'),
-                        aws_secret_access_key = os.getenv('AWSSECRETKEY')
+                        aws_secret_access_key = os.getenv('AWSSECRETKEY'))
 
 def uploadFileToS3(results):
    # initial filename per json output
