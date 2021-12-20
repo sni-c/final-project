@@ -15,6 +15,7 @@ def store_rec20_sales(collection):
 
       for i in range(0,20):
          name = {}
+         name['collectionslug'] = collection
          name['nftid'] = text['assets'][i]['id']
          name['num_sales'] = text['assets'][i]['num_sales']
          name['image_url'] = text['assets'][i]['image_original_url']
