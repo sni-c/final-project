@@ -4,12 +4,11 @@ import datetime
 import json
 import os
 import errno
-import rootkey
 import boto3
 
 client = boto3.client('s3',
-                        aws_access_key_id = rootkey.AWSAccessKeyId,
-                        aws_secret_access_key = rootkey.AWSSecretKey)
+                        aws_access_key_id = os.getenv('AWSACCESSKEYID'),
+                        aws_secret_access_key = os.getenv('AWSSECRETKEY')
 
 def uploadFileToS3(results):
    # initial filename per json output
