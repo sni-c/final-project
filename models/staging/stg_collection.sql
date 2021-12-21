@@ -3,7 +3,7 @@ with source as (
 ),
 
 stg_collection as (
-  select CURRENT_TIMESTAMP::TIMESTAMP_NTZ AS CREATE_TIME,
+  select DAILYCOLL:create_time::string AS CREATE_TIME,
   DAILYCOLL:collectionslug::string AS COLLECTIONSLUG,
   DAILYCOLL:one_day_volume::string AS one_day_volume,
   DAILYCOLL:one_day_change::string AS one_day_change,
