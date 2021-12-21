@@ -5,6 +5,9 @@ def store_rec20_sales(collection):
    
    url = "https://api.opensea.io/api/v1/assets?order_by=sale_date&order_direction=desc&offset=0&limit=20&collection=%s" % collection
 
+   x = str(datetime.datetime.now().replace(microsecond=0)).replace(' ', '_')
+   datestr = x.replace(':', '.')
+
    try:
       response = requests.request("GET", url)
 
@@ -28,9 +31,8 @@ def store_rec20_sales(collection):
             imageurl = text['assets'][i]['image_url']
          name['image_url'] = imageurl
          collectionlist.append(name)
+         name['create_time'] = datestr
       return collectionlist
 
    except:
       return None
-
-print(store_rec20_sales('cryptopunks'))

@@ -5,6 +5,9 @@ def collection_data(collection):
    
    url = "https://api.opensea.io/api/v1/collection/%s/stats" % collection
 
+   x = str(datetime.datetime.now().replace(microsecond=0)).replace(' ', '_')
+   datestr = x.replace(':', '.')
+
    try:
       response = requests.request("GET", url)
 
@@ -32,6 +35,7 @@ def collection_data(collection):
       collectiondict['average_price'] = text['stats']['average_price']
       collectiondict['market_cap'] = text['stats']['market_cap']
       collectiondict['floor_price'] = text['stats']['floor_price']
+      collectiondict['create_time'] = datestr
 
       return collectiondict
 
