@@ -2,7 +2,7 @@ with source as (
   select * from PROD.ANALYTICS.DAILYCOLLECTION_INGEST
 ),
 
-stage_collection as (
+stg_collection as (
   select CURRENT_TIMESTAMP::TIMESTAMP_NTZ AS CREATE_TIME,
   DAILYCOLL:collectionslug::string AS COLLECTIONSLUG,
   DAILYCOLL:one_day_volume::string AS one_day_volume,
@@ -26,10 +26,4 @@ stage_collection as (
   DAILYCOLL:floor_price::string AS floor_price
   FROM source,LATERAL FLATTEN (input => DAILYCOLL)
 )
-select
-  *
-from stage_collection
-
-
-
-
+select * from stg_collection
