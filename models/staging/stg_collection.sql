@@ -6,7 +6,7 @@ stg_collection as (
   select CURRENT_TIMESTAMP::TIMESTAMP_NTZ AS CREATE_TIME,
   DAILYCOLL:collectionslug::string AS COLLECTIONSLUG,
   DAILYCOLL:one_day_volume::string AS one_day_volume,
-  DAILYCOLL:one_day_change::timestamp AS one_day_change,
+  DAILYCOLL:one_day_change::string AS one_day_change,
   DAILYCOLL:one_day_sales::string AS one_day_sales,
   DAILYCOLL:one_day_average_price::string AS one_day_average_price,
   DAILYCOLL:seven_day_volume::string AS seven_day_volume,
