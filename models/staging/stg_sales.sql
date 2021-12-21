@@ -3,7 +3,7 @@ with source as (
 ),
 
 stg_sales as (
-  select CURRENT_TIMESTAMP::TIMESTAMP_NTZ AS CREATE_TIME,
+  select RECENTSALE:create_time::string AS CREATE_TIME,
   RECENTSALE:nftid::string AS ID,
   RECENTSALE:permalink::string AS URL,
   RECENTSALE:collectionslug::string AS COLLECTIONSLUG,
