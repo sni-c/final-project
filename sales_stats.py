@@ -19,13 +19,18 @@ def store_rec20_sales(collection):
          name['nftid'] = text['assets'][i]['id']
          name['permalink'] = text['assets'][i]['permalink']
          name['num_sales'] = text['assets'][i]['num_sales']
-         name['image_url'] = text['assets'][i]['image_original_url']
          name['name'] = text['assets'][i]['name']
          name['event_timestamp'] = text['assets'][i]['last_sale']['event_timestamp']
          name['eth_price'] = text['assets'][i]['last_sale']['payment_token']['eth_price']
          name['usd_price'] = text['assets'][i]['last_sale']['payment_token']['usd_price']
+         imageurl = text['assets'][i]['image_original_url'] 
+         if imageurl == None:
+            imageurl = text['assets'][i]['image_url']
+         name['image_url'] = imageurl
          collectionlist.append(name)
       return collectionlist
 
    except:
       return None
+
+print(store_rec20_sales('cryptopunks'))
