@@ -25,5 +25,6 @@ stg_collection as (
   DAILYCOLL:market_cap::string AS market_cap,
   DAILYCOLL:floor_price::string AS floor_price
   FROM source,LATERAL FLATTEN (input => DAILYCOLL)
+  QUALIFY ROW_NUMBER() OVER (PARTITION BY collectionslug,create_time ORDER BY collectionslug,create_time) = 1
 )
 select * from stg_collection
