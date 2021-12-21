@@ -24,8 +24,7 @@ stage_collection as (
   DAILYCOLL:average_price::string AS average_price,
   DAILYCOLL:market_cap::string AS market_cap,
   DAILYCOLL:floor_price::string AS floor_price
-    FROM source
-    ,LATERAL FLATTEN (input => DAILYCOLL)
+  FROM source,LATERAL FLATTEN (input => DAILYCOLL)
 )
 select
   *
