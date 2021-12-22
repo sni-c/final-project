@@ -25,4 +25,4 @@ def filedate_init():
    # filedir path 
    y = now.strftime("%D_%HH").replace('/', '-')
 
-   return [x,y] 
+   return [datestr,y] 

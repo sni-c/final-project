@@ -8,7 +8,7 @@ import bucket_init
 
 def uploadCollectionData(results):
    # get today's dates for filenames
-   x = bucket_init.filedate_init()[0]
+   datestr = bucket_init.filedate_init()[0]
    y = bucket_init.filedate_init()[1]
 
    for item in results:
