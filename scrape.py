@@ -30,10 +30,10 @@ def get_top10_collections():
       name['volume_7d'] = item['volume_7d']
       collections[item['slug']] = name
   
-   except Exception as Argument:
-      f = open("logfile_scrape.txt", "a")
-      f.write(str(Argument))
-      f.close()
-      raise Exception("Unable to scrape from Crypto.com")
+  except Exception as Argument:
+    f = open("logfile_scrape.txt", "a")
+    f.write(str(Argument))
+    f.close()
+    raise Exception("Unable to scrape from Crypto.com")
 
   return collections;
