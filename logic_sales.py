@@ -4,6 +4,7 @@ import json
 import os
 import errno
 import unittests
+import bucket_init
 
 def uploadFileToS3(results):
    # get today's dates for filenames
