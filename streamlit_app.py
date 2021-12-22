@@ -3,25 +3,15 @@
 import streamlit as st
 import snowflake.connector
 
-# Initialize connection.
-# Uses st.cache to only run once.
-@st.cache(allow_output_mutation=True, hash_funcs={"_thread.RLock": lambda _: None})
-def init_connection():
-    return snowflake.connector.connect(**st.secrets["snowflake"])
+# Everything is accessible via the st.secrets dict:
 
-conn = init_connection()
+st.write("DB username:", st.secrets["db_username"])
+st.write("DB password:", st.secrets["db_password"])
+st.write("My cool secrets:", st.secrets["my_cool_secrets"]["things_i_like"])
 
-# Perform query.
-# Uses st.cache to only rerun when the query changes or after 10 min.
-@st.cache(ttl=600)
-def run_query(query):
-    with conn.cursor() as cur:
-        cur.execute(query)
-        return cur.fetchall()
+# And the root-level secrets are also accessible as environment variables:
 
-rows = run_query("SELECT * from STG_COLLECTION;")
-
-# Print results.
-for row in rows:
-    st.write(f"{row[0]} has a :{row[1]}:")
-# streamlit app
+import os
+st.write(
+	"Has environment variables been set:",
+	os.environ["db_username"] == st.secrets["db_username"])
