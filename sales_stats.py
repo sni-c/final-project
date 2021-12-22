@@ -35,7 +35,7 @@ def store_rec20_sales(collection):
          name['create_time'] = datestr
       return collectionlist
 
-   except Exception as Argument::
+   except Exception as Argument:
       f = open("logfile_openseasales.txt", "a")
       f.write(str(Argument))
       f.close()
