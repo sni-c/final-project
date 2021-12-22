@@ -8,8 +8,8 @@ import bucket_init
 
 def uploadCollectionData(results):
    # get today's dates for filenames
-   x = filedate_init()[0]
-   y = filedate_init()[1]
+   x = bucket_init.filedate_init()[0]
+   y = bucket_init.filedate_init()[1]
 
    for item in results:
       # produce json strings for top 10 collections
