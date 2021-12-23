@@ -23,7 +23,9 @@ stg_collection as (
   DAILYCOLL:num_owners::string AS num_owners,
   DAILYCOLL:average_price::string AS average_price,
   DAILYCOLL:market_cap::string AS market_cap,
-  DAILYCOLL:floor_price::string AS floor_price
+  DAILYCOLL:floor_price::string AS floor_price,
+  DAILYCOLL:external_url::string AS external_url,
+  DAILYCOLL:image_url::string AS image_url
   FROM source,LATERAL FLATTEN (input => DAILYCOLL)
   QUALIFY ROW_NUMBER() OVER (PARTITION BY collectionslug,create_time ORDER BY collectionslug,create_time) = 1
 )
