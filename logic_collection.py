@@ -13,7 +13,7 @@ def uploadCollectionData(results):
 
    for item in results:
       # produce json strings for top 10 collections
-      jsonstr = json.dumps(collection_stat.collection_data(item))
+      jsonstr = json.dumps(collection_stat.collection_data(item, results[item]['external_url'], results[item]['image_url']))
 
       filename = 'raw_collection/'+y+'/'+item+'_'+datestr+'.json'
 

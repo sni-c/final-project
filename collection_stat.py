@@ -2,7 +2,7 @@ import requests
 import json
 import datetime
 
-def collection_data(collection):
+def collection_data(collection, external, image):
    
    url = "https://api.opensea.io/api/v1/collection/%s/stats" % collection
 
@@ -36,6 +36,8 @@ def collection_data(collection):
       collectiondict['average_price'] = text['stats']['average_price']
       collectiondict['market_cap'] = text['stats']['market_cap']
       collectiondict['floor_price'] = text['stats']['floor_price']
+      collectiondict['external_url'] = external
+      collectiondict['image_url'] = image
       collectiondict['create_time'] = datestr
 
       return collectiondict
