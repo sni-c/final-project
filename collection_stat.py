@@ -40,5 +40,8 @@ def collection_data(collection):
 
       return collectiondict
 
-   except:
-      return None
+   except Exception as Argument:
+      f = open("logfile_openseacollection.txt", "a")
+      f.write(str(Argument))
+      f.close()
+      raise Exception("Unable to pull from OpenSea - Collection Stats")

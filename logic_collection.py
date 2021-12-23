@@ -1,25 +1,15 @@
 import scrape
 import collection_stat
-import datetime
 import json
 import os
 import errno
-import boto3
-
-client = boto3.client('s3',
-                        aws_access_key_id = os.getenv('AWSACCESSKEYID'),
-                        aws_secret_access_key = os.getenv('AWSSECRETKEY'))
+import unittests
+import bucket_init
 
 def uploadCollectionData(results):
-   # initial filename per json output
-   x = str(datetime.datetime.now().replace(microsecond=0)).replace(' ', '_')
-   datestr = x.replace(':', '.')
-
-   # filedir path 
-   y = datetime.datetime.now().strftime("%D_%HH").replace('/', '-')
-
-   # S3 bucket
-   upload_file_bucket = 'snic-final-project'
+   # get today's dates for filenames
+   datestr = bucket_init.filedate_init()[0]
+   y = bucket_init.filedate_init()[1]
 
    for item in results:
       # produce json strings for top 10 collections
@@ -40,8 +30,16 @@ def uploadCollectionData(results):
          f.write(jsonstr)
 
       with open(filename, 'rb') as f:
-         client.upload_fileobj(f, upload_file_bucket, upload_file_key)
+        client.upload_fileobj(f, upload_file_bucket, upload_file_key)
+   return filename
 
 # main logic
+client = bucket_init.client_init()
+upload_file_bucket = bucket_init.bucket_name()
+
+unittests.checkBucketAccess(client, upload_file_bucket)
 results = scrape.get_top10_collections()
+
+unittests.scraperreturn(results)
 uploadCollectionData(results)
+
