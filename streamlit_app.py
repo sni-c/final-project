@@ -4,6 +4,9 @@ import streamlit as st
 import snowflake.connector
 import pandas as pd
 from PIL import Image
+import datetime
+import plotly.graph_objects as go
+from plotly.colors import n_colors
 
 # Initialize connection.
 # Uses st.cache to only run once.
@@ -21,12 +24,20 @@ def run_query(query):
         cur.execute(query)
         return cur.fetchall()
 
-collection_stats = run_query("SELECT * from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
+def streamlit_table(results):
+    df = pd.DataFrame(results)
+    df.columns = ['COLLECTIONSLUG', 'TOTAL_SALES', 'AVERAGE_PRICE (ETH)', 'FLOOR_PRICE (ETH)']
+    st.table(df.style.format(subset=['AVERAGE_PRICE (ETH)', 'FLOOR_PRICE (ETH)', 'TOTAL_SALES'], formatter="{:,.2f}"))
+
+
+# Display Top 10 Collections
+
+collection_stats_create_time = run_query("SELECT CREATE_TIME from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
+collection_stats = run_query("SELECT COLLECTIONSLUG, CAST(TOTAL_SALES AS INT), CAST(AVERAGE_PRICE AS FLOAT), CAST(FLOOR_PRICE AS FLOAT) from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
 
 st.title('Latest NFT Trends')
-st.markdown('NFT Collections by Trading Volume:')
-coll_df = pd.DataFrame(collection_stats)
-st.table(coll_df)
+st.markdown('NFT Collections by Trading Volume: Last updated on %s, %s (UTC)' % (pd.to_datetime(collection_stats_create_time[0][0].split('_')[0]).strftime("%d %B %Y"), pd.to_datetime(collection_stats_create_time[0][0].split('_')[1].replace('.',':')).strftime("%I:%M %p")))
+streamlit_table(collection_stats)
 
 collection_name = run_query("SELECT COLLECTIONSLUG from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
 query1 = "SELECT * from STG_SALES WHERE COLLECTIONSLUG = '%s' ORDER BY CREATE_TIME DESC LIMIT 10;"
