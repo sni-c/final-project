@@ -1,7 +1,6 @@
 name: Scrape NFT recent sales of Top 10 collections every 15 minutes and upload to S3
 
 on:
-  workflow_dispatch:
   schedule:
     - cron:  '0 1 * * *'
 
