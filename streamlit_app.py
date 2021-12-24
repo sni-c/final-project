@@ -1,7 +1,9 @@
 # streamlit_app.py
-#!/usr/bin/env python
+
 import streamlit as st
 import snowflake.connector
+import snowflake as sf
+from snowflake import connector
 import pandas as pd
 from PIL import Image
 import datetime as dt
