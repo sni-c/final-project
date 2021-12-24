@@ -2,6 +2,10 @@ import requests
 import json
 import datetime
 
+def wei_converter(wei):
+   eth = wei / 1000000000000000000
+   return eth
+
 def store_rec20_sales(collection):
    
    url = "https://api.opensea.io/api/v1/assets?order_by=sale_date&order_direction=desc&offset=0&limit=20&collection=%s" % collection
@@ -27,6 +31,7 @@ def store_rec20_sales(collection):
          name['event_timestamp'] = text['assets'][i]['last_sale']['event_timestamp']
          name['eth_price'] = text['assets'][i]['last_sale']['payment_token']['eth_price']
          name['usd_price'] = text['assets'][i]['last_sale']['payment_token']['usd_price']
+         name['sold_price'] = wei_converter(int(text['assets'][i]['last_sale']['total_price']))
          imageurl = text['assets'][i]['image_original_url'] 
          if imageurl == None:
             imageurl = text['assets'][i]['image_url']
@@ -40,3 +45,4 @@ def store_rec20_sales(collection):
       f.write(str(Argument))
       f.close()
       raise Exception("Unable to pull from OpenSea - Sales Stats")
+

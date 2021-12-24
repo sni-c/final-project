@@ -28,6 +28,8 @@ def get_top10_collections():
       name['floor_price'] = item['floor_price']
       name['sales_7d'] = item['sales_7d']
       name['volume_7d'] = item['volume_7d']
+      name['image_url'] = item['image_url']
+      name['external_url'] = item['external_url']
       collections[item['slug']] = name
   
   except Exception as Argument:

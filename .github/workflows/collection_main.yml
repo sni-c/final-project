@@ -1,6 +1,7 @@
 name: Scrape Top 10 Collection Stats Daily, upload to S3
 
 on:
+  workflow_dispatch:
   schedule:
     - cron:  '0 0 * * *'
 
