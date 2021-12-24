@@ -7,5 +7,5 @@ Pillow==8.4.0
 plotly==5.5.0
 requests==2.26.0
 snowflake==0.0.3
-snowflake-connector-python==2.6.2
+snowflake_connector_python==2.6.2
 streamlit==1.0.0
