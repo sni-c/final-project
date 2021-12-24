@@ -11,7 +11,7 @@ stg_sales as (
   RECENTSALE:event_timestamp::timestamp AS EVENT_TIMESTAMP,
   RECENTSALE:eth_price::string AS ETH_PRICE,
   RECENTSALE:usd_price::string AS USD_PRICE,
-  RECENTSALE:sold_price::string AS SOLD_PRICE,
+  RECENTSALE:sold_price::float AS SOLD_PRICE,
   RECENTSALE:image_url::string AS IMAGE_URL,
   RECENTSALE:num_sales::string AS NUM_SALES
   FROM source,LATERAL FLATTEN (input => RECENTSALE)
