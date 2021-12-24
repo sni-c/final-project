@@ -4,7 +4,7 @@ import streamlit as st
 import snowflake.connector
 import pandas as pd
 from PIL import Image
-import datetime
+import datetime as dt
 import plotly.graph_objects as go
 from plotly.colors import n_colors
 
@@ -40,6 +40,11 @@ def streamlit_table(results, image, slug, typer):
     st.image(collection_image,width=60,caption=slug)
     st.table(df.style.format(subset=['AVERAGE_PRICE (ETH)', 'FLOOR_PRICE (ETH)', 'TOTAL_SALES', '1D_CHANGE', '7D_CHANGE', '30D_CHANGE','% OWNER/SUPPLY'], formatter="{:,.2f}").applymap(color_negative_red, subset=['1D_CHANGE', '7D_CHANGE', '30D_CHANGE']))
 
+def days_between(d1, d2):
+    d1 = dt.datetime.strptime(d1, "%Y-%m-%d")
+    d2 = dt.datetime.strptime(d2, "%Y-%m-%d")
+    return abs((d2 - d1).days)
+
 st.markdown("""
 <style>
 .small-font {
@@ -53,13 +58,14 @@ page = st.selectbox("Choose your page", ["Home Page", "Page 1: Latest NFT Trends
 
 if page == "Home Page":
     # Display 10 Random Recently Sold NFT images on Home Page 
-    carousell_img = run_query("WITH PRICING AS (SELECT IMAGE_URL, SOLD_PRICE (ETH) FROM STG_SALES LIMIT 25) SELECT * FROM PRICING ORDER BY SOLD_PRICE (ETH) DESC")
+    carousell_img = run_query("WITH PRICING AS (SELECT IMAGE_URL, SOLD_PRICE, EVENT_TIMESTAMP FROM STG_SALES WHERE SOLD_PRICE IS NOT NULL LIMIT 49) SELECT * FROM PRICING ORDER BY SOLD_PRICE DESC")
     carousell_img_clean = []
     carousell_price = []
-    for item in carousell_img:
-        carousell_img_clean.append(item[0])
-        carousell_price.append(item[2])
-    st.image(carousell_img_clean,width=90,caption=carousell_price)
+    for i in range(len(carousell_img)):
+        carousell_img_clean.append(carousell_img[i][0])
+        days = days_between(str(carousell_img[i][2].date()), str(dt.datetime.now().date()))
+        carousell_price.append(carousell_img[i][1])
+    st.image(carousell_img_clean,width=100,caption=carousell_price)
 
 
 if page == "Page 1: Latest NFT Trends":
@@ -97,24 +103,32 @@ if page == "Page 1: Latest NFT Trends":
 
 if page == "Page 2: Recent Sales":
 
+    sales_stats_create_time = run_query("SELECT CREATE_TIME from STG_SALES ORDER BY CREATE_TIME DESC LIMIT 10;")
+    
     # Display Most Recent Sales of Each Collection
 
-    collection_name = run_query("SELECT COLLECTIONSLUG from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
-    query1 = "SELECT * from STG_SALES WHERE COLLECTIONSLUG = '%s' ORDER BY CREATE_TIME DESC LIMIT 10;"
-    queryimg = "SELECT IMAGE_URL from STG_SALES WHERE COLLECTIONSLUG = '%s' QUALIFY ROW_NUMBER() OVER (PARTITION BY IMAGE_URL ORDER BY IMAGE_URL DESC) = 1;"
-
+    collection_name = run_query("SELECT COLLECTIONSLUG from STG_COLLECTION ORDER BY CREATE_TIME, FLOOR_PRICE DESC LIMIT 10;")
+    query1 = "SELECT ID, URL, EVENT_TIMESTAMP, NAME, SOLD_PRICE, IMAGE_URL, NUM_SALES from STG_SALES WHERE COLLECTIONSLUG = '%s' ORDER BY CREATE_TIME DESC LIMIT 20;"
+    
     st.title('Recent Sales Per Collection')
-    st.markdown('10 recent sales per Top 10 collection:')
+    st.markdown('List of recent sales for each Top 10 collection')
+    st.markdown('<p class="small-font">Last updated on %s, %s (UTC)</p>' % (pd.to_datetime(sales_stats_create_time[0][0].split('_')[0]).strftime("%d %B %Y"), pd.to_datetime(sales_stats_create_time[0][0].split('_')[1].replace('.',':')).strftime("%I:%M %p")), unsafe_allow_html=True)
 
     for i in range(0,10):
+        linklist = []
+        imagelist = []
+        captionlist = []
+        # Find Collection Name of Top 10 collection
         query2 = query1 % collection_name[i][0]
-        sales_stats = run_query(query2) 
-        stats_df = pd.DataFrame(sales_stats)
-        st.table(stats_df)
+        sales_stats = run_query(query2)
+        st.title(collection_name[i][0]) 
+        for p in range(len(sales_stats)):
+            imagelist.append(sales_stats[p][5])
+            captionlist.append(sales_stats[p][4])
+            linklist.append("[link](%s)" % sales_stats[p][1])
+        st.image(imagelist,width=80,caption=captionlist)
 
-        st.markdown('NFT Viz')
-        queryimg2 = queryimg % collection_name[i][0]
-        sales_images = run_query(queryimg2)
-        st.image(sales_images[i][0], width = 200)
+
+
 
 
