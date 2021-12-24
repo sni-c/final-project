@@ -1,5 +1,5 @@
 # streamlit_app.py
-
+#!/usr/bin/env python
 import streamlit as st
 import snowflake.connector
 import pandas as pd
