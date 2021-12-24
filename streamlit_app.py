@@ -53,7 +53,7 @@ page = st.selectbox("Choose your page", ["Home Page", "Page 1: Latest NFT Trends
 
 if page == "Home Page":
     # Display 10 Random Recently Sold NFT images on Home Page 
-    carousell_img = run_query("WITH PRICING AS (SELECT IMAGE_URL,CAST(ETH_PRICE AS FLOAT) AS ETH_PRICE,USD_PRICE FROM STG_SALES LIMIT 25) SELECT * FROM PRICING ORDER BY ETH_PRICE DESC")
+    carousell_img = run_query("WITH PRICING AS (SELECT IMAGE_URL, SOLD_PRICE (ETH) FROM STG_SALES LIMIT 25) SELECT * FROM PRICING ORDER BY SOLD_PRICE (ETH) DESC")
     carousell_img_clean = []
     carousell_price = []
     for item in carousell_img:
