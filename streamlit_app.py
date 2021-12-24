@@ -1,7 +1,7 @@
 # streamlit_app.py
 
 import streamlit as st
-import snowflake.connector
+#import snowflake.connector
 import snowflake as sf
 from snowflake import connector
 import pandas as pd
