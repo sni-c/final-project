@@ -24,37 +24,97 @@ def run_query(query):
         cur.execute(query)
         return cur.fetchall()
 
-def streamlit_table(results):
+def color_negative_red(value):
+  if value < 0:
+    color = 'red'
+  elif value > 0:
+    color = 'green'
+  else:
+    color = 'black'
+  return 'color: %s' % color
+
+def streamlit_table(results, image, slug, typer):
     df = pd.DataFrame(results)
-    df.columns = ['COLLECTIONSLUG', 'TOTAL_SALES', 'AVERAGE_PRICE (ETH)', 'FLOOR_PRICE (ETH)']
-    st.table(df.style.format(subset=['AVERAGE_PRICE (ETH)', 'FLOOR_PRICE (ETH)', 'TOTAL_SALES'], formatter="{:,.2f}"))
+    df.columns = ['COLLECTIONSLUG', 'TOTAL_SALES', 'AVERAGE_PRICE (ETH)', 'FLOOR_PRICE (ETH)', '1D_CHANGE', '7D_CHANGE', '30D_CHANGE', '% OWNER/SUPPLY']
+    df.sort_values(['%s' % typer], inplace=True, ascending=False)
+    st.image(collection_image,width=60,caption=slug)
+    st.table(df.style.format(subset=['AVERAGE_PRICE (ETH)', 'FLOOR_PRICE (ETH)', 'TOTAL_SALES', '1D_CHANGE', '7D_CHANGE', '30D_CHANGE','% OWNER/SUPPLY'], formatter="{:,.2f}").applymap(color_negative_red, subset=['1D_CHANGE', '7D_CHANGE', '30D_CHANGE']))
+
+st.markdown("""
+<style>
+.small-font {
+    font-size:14px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Page hierarchy
+page = st.selectbox("Choose your page", ["Home Page", "Page 1: Latest NFT Trends", "Page 2: Recent Sales"]) 
+
+if page == "Home Page":
+    # Display 10 Random Recently Sold NFT images on Home Page 
+    carousell_img = run_query("WITH PRICING AS (SELECT IMAGE_URL,CAST(ETH_PRICE AS FLOAT) AS ETH_PRICE,USD_PRICE FROM STG_SALES LIMIT 25) SELECT * FROM PRICING ORDER BY ETH_PRICE DESC")
+    carousell_img_clean = []
+    carousell_price = []
+    for item in carousell_img:
+        carousell_img_clean.append(item[0])
+        carousell_price.append(item[2])
+    st.image(carousell_img_clean,width=90,caption=carousell_price)
 
 
-# Display Top 10 Collections
+if page == "Page 1: Latest NFT Trends":
 
-collection_stats_create_time = run_query("SELECT CREATE_TIME from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
-collection_stats = run_query("SELECT COLLECTIONSLUG, CAST(TOTAL_SALES AS INT), CAST(AVERAGE_PRICE AS FLOAT), CAST(FLOOR_PRICE AS FLOAT) from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
+    # Display Top 10 Collections
+    collection_stats_create_time = run_query("SELECT CREATE_TIME from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
+    collection_stats = run_query("WITH RESULTING AS (SELECT IMAGE_URL, COLLECTIONSLUG, CAST(TOTAL_SALES AS INT) AS TOTAL_SALES, CAST(AVERAGE_PRICE AS FLOAT) AS AVERAGE_PRICE, CAST(FLOOR_PRICE AS FLOAT) AS FLOOR_PRICE, CAST(ONE_DAY_CHANGE AS FLOAT) AS ONE_DAY_CHANGE, CAST(SEVEN_DAY_CHANGE AS FLOAT) AS SEVEN_DAY_CHANGE, CAST(THIRTY_DAY_CHANGE AS FLOAT) AS THIRTY_DAY_CHANGE, CAST(TOTAL_SUPPLY AS INT) AS TOTAL_SUPPLY, CAST(NUM_OWNERS AS INT) AS NUM_OWNERS from PROD.DBT_SNIC.STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10) SELECT * FROM RESULTING ORDER BY TOTAL_SALES DESC")
 
-st.title('Latest NFT Trends')
-st.markdown('NFT Collections by Trading Volume: Last updated on %s, %s (UTC)' % (pd.to_datetime(collection_stats_create_time[0][0].split('_')[0]).strftime("%d %B %Y"), pd.to_datetime(collection_stats_create_time[0][0].split('_')[1].replace('.',':')).strftime("%I:%M %p")))
-streamlit_table(collection_stats)
+    collection_image = []
+    collection_slug = []
+    collection_results = []
+    for i in range(len(collection_stats)):
+        collection_image.append(collection_stats[i][0])
+        collection_slug.append(collection_stats[i][1])
+        collection_results.append((collection_stats[i][1],collection_stats[i][2],collection_stats[i][3],collection_stats[i][4],collection_stats[i][5],collection_stats[i][6],collection_stats[i][7],collection_stats[i][9]/collection_stats[i][8]*100))
 
-collection_name = run_query("SELECT COLLECTIONSLUG from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
-query1 = "SELECT * from STG_SALES WHERE COLLECTIONSLUG = '%s' ORDER BY CREATE_TIME DESC LIMIT 10;"
-queryimg = "SELECT IMAGE_URL from STG_SALES WHERE COLLECTIONSLUG = '%s' QUALIFY ROW_NUMBER() OVER (PARTITION BY IMAGE_URL ORDER BY IMAGE_URL DESC) = 1;"
+    st.title('Latest NFT Trends')
+    st.markdown('NFT Collections by Trading Volume over Last 7 Days')
+    st.markdown('<p class="small-font">Last updated on %s, %s (UTC)</p>' % (pd.to_datetime(collection_stats_create_time[0][0].split('_')[0]).strftime("%d %B %Y"), pd.to_datetime(collection_stats_create_time[0][0].split('_')[1].replace('.',':')).strftime("%I:%M %p")), unsafe_allow_html=True)
 
-st.title('Recent Sales Per Collection')
-st.markdown('10 recent sales per Top 10 collection:')
+    table_type = st.radio(
+        "Select table type",
+        options=[
+        "Sort by Total Sales",
+        "Sort by Average Price",
+        "Sort by Floor Price"
+        ],
+        )
+    if table_type == "Sort by Total Sales":
+        streamlit_table(collection_results, collection_image, collection_slug, 'TOTAL_SALES')
+    elif table_type == "Sort by Average Price":
+        streamlit_table(collection_results, collection_image, collection_slug, 'AVERAGE_PRICE (ETH)')
+    else:
+        streamlit_table(collection_results, collection_image, collection_slug, 'FLOOR_PRICE (ETH)')
 
-for i in range(0,10):
-    query2 = query1 % collection_name[i][0]
-    sales_stats = run_query(query2) 
-    stats_df = pd.DataFrame(sales_stats)
-    st.table(stats_df)
+if page == "Page 2: Recent Sales":
 
-    st.markdown('NFT Viz')
-    queryimg2 = queryimg % collection_name[i][0]
-    sales_images = run_query(queryimg2)
-    st.image(sales_images[i][0], width = 200)
+    # Display Most Recent Sales of Each Collection
+
+    collection_name = run_query("SELECT COLLECTIONSLUG from STG_COLLECTION ORDER BY CREATE_TIME DESC LIMIT 10;")
+    query1 = "SELECT * from STG_SALES WHERE COLLECTIONSLUG = '%s' ORDER BY CREATE_TIME DESC LIMIT 10;"
+    queryimg = "SELECT IMAGE_URL from STG_SALES WHERE COLLECTIONSLUG = '%s' QUALIFY ROW_NUMBER() OVER (PARTITION BY IMAGE_URL ORDER BY IMAGE_URL DESC) = 1;"
+
+    st.title('Recent Sales Per Collection')
+    st.markdown('10 recent sales per Top 10 collection:')
+
+    for i in range(0,10):
+        query2 = query1 % collection_name[i][0]
+        sales_stats = run_query(query2) 
+        stats_df = pd.DataFrame(sales_stats)
+        st.table(stats_df)
+
+        st.markdown('NFT Viz')
+        queryimg2 = queryimg % collection_name[i][0]
+        sales_images = run_query(queryimg2)
+        st.image(sales_images[i][0], width = 200)
 
 
