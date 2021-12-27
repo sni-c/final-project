@@ -1,3 +1,4 @@
 # NFTcharts: Uncovering Trade Activity & Hot Trends
 
-### Visit ![Streamlit App](https://share.streamlit.io/sni-c/final-project)
+### Go to ![Streamlit App](https://share.streamlit.io/sni-c/final-project)
+You will need a streamlit account to view the application.
