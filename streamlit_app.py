@@ -2,8 +2,7 @@
 
 import streamlit as st
 import pandas as pd
-import snowflake
-from snowflake import connector
+import snowflake.connector
 from PIL import Image
 import datetime as dt
 import plotly.graph_objects as go
