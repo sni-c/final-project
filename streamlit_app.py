@@ -6,6 +6,7 @@ from PIL import Image
 import datetime as dt
 import plotly.graph_objects as go
 from plotly.colors import n_colors
+import snowflake
 
 #!/usr/bin/env python
 import snowflake.connector
