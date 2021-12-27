@@ -2,11 +2,13 @@
 
 import streamlit as st
 import pandas as pd
-import snowflake.connector
 from PIL import Image
 import datetime as dt
 import plotly.graph_objects as go
 from plotly.colors import n_colors
+
+#!/usr/bin/env python
+import snowflake.connector
 
 # Initialize connection.
 # Uses st.cache to only run once.
