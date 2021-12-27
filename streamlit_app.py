@@ -1,9 +1,9 @@
 # streamlit_app.py
 
 import streamlit as st
+import pandas as pd
 import snowflake
 from snowflake import connector
-import pandas as pd
 from PIL import Image
 import datetime as dt
 import plotly.graph_objects as go
@@ -127,7 +127,11 @@ if page == "Page 2: Recent Sales":
             imagelist.append(sales_stats[p][5])
             captionlist.append(sales_stats[p][4])
             linklist.append("[link](%s)" % sales_stats[p][1])
-        st.image(imagelist,width=80,caption=captionlist)
+        try:
+            st.image(imagelist,width=80,caption=captionlist)
+        except:
+            pass
+
 
 
 
