@@ -59,6 +59,8 @@ st.markdown("""
 # Page hierarchy
 page = st.selectbox("Choose your page", ["Home Page", "Page 1: Latest NFT Trends", "Page 2: Recent Sales"]) 
 
+st.warning("This is a demo application. Due to AWS S3 Free Tier limits, the last cron job ran on 27 December 2021.")
+
 if page == "Home Page":
     # Display 10 Random Recently Sold NFT images on Home Page 
     carousell_img = run_query("WITH PRICING AS (SELECT IMAGE_URL, SOLD_PRICE, EVENT_TIMESTAMP FROM STG_SALES WHERE SOLD_PRICE IS NOT NULL LIMIT 49) SELECT * FROM PRICING ORDER BY SOLD_PRICE DESC")
